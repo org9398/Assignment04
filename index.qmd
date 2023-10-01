@@ -1,10 +1,26 @@
 ---
 title: "Assignment 04"
 author: "Olivia Gomez and Edward Malcolm"
-format: html
-editor: visual
+format:
+  html:
+    self-contained: true
 ---
 
 ```{r}
+library(tidyverse)
 
+base_url <- "https://www2.census.gov/programs-surveys/demo/datasets/hhp/"
+week_url <- "2023/wk52/HPS_Week52_PUF_CSV.zip"
+
+pulse_url <- paste0(base_url, week_url)
+dir.create("data")
+
+download.file(
+pulse_url,
+destfile = "data/pulse52.zip"
+)
+
+unzip(zipfile = "data/pulse52.zip", exdir = "data")
+
+pulse <- read_csv("data/pulse2022_puf_52.csv")
 ```
