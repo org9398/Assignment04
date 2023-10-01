@@ -22,5 +22,64 @@ destfile = "data/pulse52.zip"
 
 unzip(zipfile = "data/pulse52.zip", exdir = "data")
 
-pulse <- read_csv("data/pulse2022_puf_52.csv")
+library(janitor)
+
+pulse <- read_csv("data/pulse2022_puf_52.csv") %>%
+  janitor::clean_names()
+
+
 ```
+
+We got our data from the U.S. Census Bureau's Household Pulse Survey - linked [here.](https://www2.census.gov/programs-surveys/demo/datasets/hhp/)
+
+We specifically used data from Week 52.
+
+**Graph 1**
+
+race vs educational attainment
+
+```{r}
+pulse %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = rrace), show.legend = TRUE) +
+  facet_wrap(~ eeduc)
+```
+
+**Graph 2**
+
+number of people in household by average spent on groceries
+
+```{r}
+pulse %>%
+  group_by(thhld_numper) %>%
+  mutate(avg_spend = mean(tspndfood)
+  ) %>%
+  ggplot() +
+  geom_line(mapping = aes(x = thhld_numper, y = avg_spend))
+
+```
+
+**Graph 3 - need to figure out**
+
+```{r}
+pulse %>%
+  ggplot() +
+  geom_point(mapping = aes(x = trentamt, y = tccarecost)) 
+
+
+```
+
+**Graph 4**
+
+educational attainment versus avg number of children in household
+
+```{r}
+
+pulse %>%
+  group_by(eeduc) %>%
+  summarize(avg_num_child = mean(thhld_numkid, na.rm = TRUE)) %>%
+  ggplot(mapping = aes(x = factor(eeduc), y = avg_num_child)) +
+  geom_col()
+```
+
+continuous variables - rent, cost of childcare, household spent on food
