@@ -8,11 +8,12 @@ format:
 
 ```{r}
 library(tidyverse)
-
+library(janitor)
 base_url <- "https://www2.census.gov/programs-surveys/demo/datasets/hhp/"
 week_url <- "2023/wk52/HPS_Week52_PUF_CSV.zip"
 
 pulse_url <- paste0(base_url, week_url)
+
 dir.create("data")
 
 download.file(
@@ -21,8 +22,6 @@ destfile = "data/pulse52.zip"
 )
 
 unzip(zipfile = "data/pulse52.zip", exdir = "data")
-
-library(janitor)
 
 pulse <- read_csv("data/pulse2022_puf_52.csv") %>%
   janitor::clean_names()
@@ -43,6 +42,12 @@ pulse %>%
   ggplot() +
   geom_bar(mapping = aes(x = rrace), show.legend = TRUE) +
   facet_wrap(~ eeduc)
+
+pulse %>%
+  filter(income != -99, income != -88) %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = income), show.legend = TRUE) +
+  facet_wrap(~ region)
 ```
 
 **Graph 2**
@@ -55,16 +60,14 @@ pulse %>%
   mutate(avg_spend = mean(tspndfood)
   ) %>%
   ggplot() +
-  geom_line(mapping = aes(x = thhld_numper, y = avg_spend))
+  geom_line(mapping = aes(x = thhld_numper, y = avg_spend)) + 
+  geom_point(mapping = aes(x = thhld_numper, y = avg_spend))
 
 ```
 
-**Graph 3 - need to figure out**
+**Graph 3**
 
 ```{r}
-pulse %>%
-  ggplot() +
-  geom_point(mapping = aes(x = trentamt, y = tccarecost)) 
 
 
 ```
