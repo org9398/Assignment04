@@ -29,20 +29,15 @@ pulse <- read_csv("data/pulse2022_puf_52.csv") %>%
 
 ```
 
-We got our data from the U.S. Census Bureau's Household Pulse Survey - linked [here.](https://www2.census.gov/programs-surveys/demo/datasets/hhp/)
+We are using data from the U.S. Census Bureau's Household Pulse Survey - linked [here.](https://www2.census.gov/programs-surveys/demo/datasets/hhp/)
 
 We specifically used data from Week 52.
 
 **Graph 1**
 
-race vs educational attainment
+income distribution by region
 
 ```{r}
-pulse %>%
-  ggplot() +
-  geom_bar(mapping = aes(x = rrace), show.legend = TRUE) +
-  facet_wrap(~ eeduc)
-
 pulse %>%
   filter(income != -99, income != -88) %>%
   ggplot() +
@@ -68,6 +63,12 @@ pulse %>%
 **Graph 3**
 
 ```{r}
+pulse %>%
+  filter(forclose != -99, forclose != -88) %>%
+  ggplot(aes(x = forclose, fill = factor(rrace))) +  
+  geom_histogram(binwidth = 0.9) +
+  labs(title = "Histogram of 'forclose' by 'rrace'")
+
 
 
 ```
@@ -77,12 +78,9 @@ pulse %>%
 educational attainment versus avg number of children in household
 
 ```{r}
-
 pulse %>%
   group_by(eeduc) %>%
   summarize(avg_num_child = mean(thhld_numkid, na.rm = TRUE)) %>%
   ggplot(mapping = aes(x = factor(eeduc), y = avg_num_child)) +
   geom_col()
 ```
-
-continuous variables - rent, cost of childcare, household spent on food
