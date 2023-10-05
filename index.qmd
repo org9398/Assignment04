@@ -1,6 +1,6 @@
 ---
 title: "Assignment 04"
-author: "Olivia Gomez and Edward Malcolm"
+authors: "Olivia Gomez and Edward Malcolm"
 format:
   html:
     self-contained: true
@@ -35,41 +35,63 @@ We specifically used data from Week 52.
 
 **Graph 1**
 
-income distribution by region
-
 ```{r}
+
+pulse$income <- factor(pulse$income)
+
 pulse %>%
   filter(income != -99, income != -88) %>%
   ggplot() +
   geom_bar(mapping = aes(x = income), show.legend = TRUE) +
-  facet_wrap(~ region)
+  facet_wrap(~ region, labeller = labeller(region = c(
+    `1` = "Northeast",
+    `2` = "South",
+    `3` = "Midwest",
+    `4` = "West"
+  ))) +
+  labs(title = "Income Distribution in the Four Regions of the U.S.", y = "Count" , x = "Income Bracket") +
+  scale_x_discrete(labels = c(
+    `1` = "<25K",
+    `2` = "25K - 34,999K",
+    `3` = "35K - 49,999K",
+    `4` = "50K - 74,999K",
+    `5` = "75K - 99,999K",
+    `6` = "100K - 149,999K",
+    `7` = "150K - 199,999K",
+    `8` = ">200K"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 **Graph 2**
 
-number of people in household by average spent on groceries
+number of people in household by average spent on groceries - per region
 
 ```{r}
-pulse %>%
-  group_by(thhld_numper) %>%
-  mutate(avg_spend = mean(tspndfood)
-  ) %>%
-  ggplot() +
-  geom_line(mapping = aes(x = thhld_numper, y = avg_spend)) + 
-  geom_point(mapping = aes(x = thhld_numper, y = avg_spend))
 
+pulse %>%
+  group_by(thhld_numper, region) %>%
+  mutate(avg_spend = mean(tspndfood, na.rm = TRUE)) %>%
+  arrange(region, thhld_numper) %>%
+  select(thhld_numper, avg_spend, region) %>%
+  ggplot(mapping=aes(x = thhld_numper, y = avg_spend, color = region, group = region)) +
+  geom_line() + 
+  geom_point () +
+  labs(title = "Average Amount Spent on Groceries Compared to Household Size, by Region", y = "Average Amount Spent on Groceries ($)" , x = "Total Number of People in Household") 
+  
 ```
 
 **Graph 3**
+
+Histogram of number of responses to likelihood of foreclosure in the next 2 months (1 being very likely, 4 being not at all likely) categorized by race.
 
 ```{r}
 pulse %>%
   filter(forclose != -99, forclose != -88) %>%
   ggplot(aes(x = forclose, fill = factor(rrace))) +  
-  geom_histogram(binwidth = 0.9) +
+  geom_histogram(binwidth = 1) +
   labs(title = "Histogram of 'forclose' by 'rrace'")
-
-
 
 ```
 
