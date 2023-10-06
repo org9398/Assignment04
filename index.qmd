@@ -7,8 +7,10 @@ format:
 ---
 
 ```{r}
+
 library(tidyverse)
 library(janitor)
+library(ggthemes)
 base_url <- "https://www2.census.gov/programs-surveys/demo/datasets/hhp/"
 week_url <- "2023/wk52/HPS_Week52_PUF_CSV.zip"
 
@@ -33,7 +35,9 @@ We are using data from the U.S. Census Bureau's Household Pulse Survey - linked 
 
 We specifically used data from Week 52.
 
-**Graph 1**
+**Visualization 1**
+
+*Description Here*
 
 ```{r}
 
@@ -42,14 +46,13 @@ pulse$income <- factor(pulse$income)
 pulse %>%
   filter(income != -99, income != -88) %>%
   ggplot() +
-  geom_bar(mapping = aes(x = income), show.legend = TRUE) +
+  geom_bar(mapping = aes(x = income), fill = "blue") +
   facet_wrap(~ region, labeller = labeller(region = c(
     `1` = "Northeast",
     `2` = "South",
     `3` = "Midwest",
     `4` = "West"
   ))) +
-  labs(title = "Income Distribution in the Four Regions of the U.S.", y = "Count" , x = "Income Bracket") +
   scale_x_discrete(labels = c(
     `1` = "<25K",
     `2` = "25K - 34,999K",
@@ -60,15 +63,18 @@ pulse %>%
     `7` = "150K - 199,999K",
     `8` = ">200K"
   )) +
+   labs(title = "Income Distribution in the Four Regions of the U.S.", y = "Count" , x = "Income Bracket ($)") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
 ```
 
-**Graph 2**
+**Visualization 2**
 
-number of people in household by average spent on groceries - per region
+*Description here*
 
 ```{r}
+
+pulse$region <- factor(pulse$region)
 
 pulse %>%
   group_by(thhld_numper, region) %>%
@@ -77,21 +83,41 @@ pulse %>%
   select(thhld_numper, avg_spend, region) %>%
   ggplot(mapping=aes(x = thhld_numper, y = avg_spend, color = region, group = region)) +
   geom_line() + 
-  geom_point () +
-  labs(title = "Average Amount Spent on Groceries Compared to Household Size, by Region", y = "Average Amount Spent on Groceries ($)" , x = "Total Number of People in Household") 
+  geom_point() +
+  geom_text(aes(label = ""), vjust = -0.5) +
+  scale_color_manual(values = c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple"),
+                     labels = c("1" = "Northeast", "2" = "South", "3" = "Midwest", "4" = "West")) +
+  theme_minimal() +
+    labs(title = "Average Amount Spent on Groceries Compared to Household Size, by Region", y = "Average Amount Spent on Groceries ($)", x = "Total Number of People in Household", color = "Region") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
   
 ```
 
-**Graph 3**
+**Visualization 3**
 
-Histogram of number of responses to likelihood of foreclosure in the next 2 months (1 being very likely, 4 being not at all likely) categorized by race.
+*Description Here*
 
 ```{r}
 pulse %>%
   filter(forclose != -99, forclose != -88) %>%
   ggplot(aes(x = forclose, fill = factor(rrace))) +  
-  geom_histogram(binwidth = 1) +
-  labs(title = "Histogram of 'forclose' by 'rrace'")
+  geom_bar() +
+  labs(title = "Foreclosure Likelihood in the Next Two Months, by Race", y = "Count", x = "Response", fill = "Race") +
+scale_x_discrete(
+    limits = c("1", "2", "3", "4"),
+    labels = c(
+      "1" = "Very Likely",
+      "2" = "Somewhat Likely",
+      "3" = "Not Very Likely",
+      "4" = "Not at All Likely"
+    )) +
+  scale_fill_manual(values = c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple"),
+                     labels = c("1" = "White", "2" = "Black", "3" = "Asian", "4" = "Any other Race")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
+
 
 ```
 
@@ -104,5 +130,19 @@ pulse %>%
   group_by(eeduc) %>%
   summarize(avg_num_child = mean(thhld_numkid, na.rm = TRUE)) %>%
   ggplot(mapping = aes(x = factor(eeduc), y = avg_num_child)) +
-  geom_col()
+  geom_col(fill = "green") +
+  geom_text(aes(label = round(avg_num_child, 2)), vjust = -0.5, size = 3) +
+  labs(title = "Average Number of Children by Educational Attainment", y = "Average Number of Children" , x = "Education Level") +
+  scale_x_discrete(labels = c(
+    `1` = "Less than high school",
+    `2` = "Some high school",
+    `3` = "High school Degree",
+    `4` = "Some college",
+    `5` = "Associate’s degree",
+    `6` = "Bachelor's degree",
+    `7` = "Graduate degree"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
+
 ```
