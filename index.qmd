@@ -6,7 +6,7 @@ format:
     self-contained: true
 ---
 
-```{r}
+```{r, include=FALSE}
 
 library(tidyverse)
 library(janitor)
@@ -37,7 +37,7 @@ We specifically used data from Week 52.
 
 **Visualization 1**
 
-*Description Here*
+This visualization explores the income distributions across the four major regions of the U.S.: Northeast, South, Midwest, and West. The four different regions appear to have a normal distribution of income, with the most common income being between \$50,000 and \$74,999. However, it's clear that there are slight differences in distribution, such as the fact that the West skews slightly left towards the higher end of income levels. An example of the applicability of this visualization is that it could inform policies that wish to target different regions to reduce wage disparities.
 
 ```{r}
 
@@ -46,7 +46,7 @@ pulse$income <- factor(pulse$income)
 pulse %>%
   filter(income != -99, income != -88) %>%
   ggplot() +
-  geom_bar(mapping = aes(x = income), fill = "blue") +
+  geom_bar(mapping = aes(x = income, alpha = .8), fill = "blue", show.legend = FALSE) +
   facet_wrap(~ region, labeller = labeller(region = c(
     `1` = "Northeast",
     `2` = "South",
@@ -63,14 +63,14 @@ pulse %>%
     `7` = "150K - 199,999K",
     `8` = ">200K"
   )) +
-   labs(title = "Income Distribution in the Four Regions of the U.S.", y = "Count" , x = "Income Bracket ($)") +
+   labs(title = "How Does Income Vary Across the Country?", y = "Count" , x = "Income Bracket ($)", subtitle = "Income Distribution in the Four Regions of the U.S.", caption = "Source: U.S. Census Bureau Household Pulse Survey") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5), panel.grid = element_blank())
 ```
 
 **Visualization 2**
 
-*Description here*
+This visualization plots the average amount spent on groceries for each household size, further disaggregated by region, to illustrate where people are spending more on groceries and the trend between household size and groceries expenditures. As expected, the trend was positive - a larger household spent more on groceries. The interesting spikes in the Northeast and Midwest could flag that further investigation is needed to determine if groceries are significantly more expensive in those regions. This graph could inform nutrition support policies to target those who need it the most.
 
 ```{r}
 
@@ -82,15 +82,15 @@ pulse %>%
   arrange(region, thhld_numper) %>%
   select(thhld_numper, avg_spend, region) %>%
   ggplot(mapping=aes(x = thhld_numper, y = avg_spend, color = region, group = region)) +
-  geom_line() + 
+  geom_line(linetype = "dashed") + 
   geom_point() +
   geom_text(aes(label = ""), vjust = -0.5) +
   scale_color_manual(values = c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple"),
                      labels = c("1" = "Northeast", "2" = "South", "3" = "Midwest", "4" = "West")) +
   theme_minimal() +
-    labs(title = "Average Amount Spent on Groceries Compared to Household Size, by Region", y = "Average Amount Spent on Groceries ($)", x = "Total Number of People in Household", color = "Region") +
+    labs(title = "Does Spending on Groceries Substantially Vary by Region and Household Size?", y = "Average Amount Spent on Groceries ($)", x = "Total Number of People in Household", color = "Region", subtitle = "Average Amount Spent on Groceries Compared to Household Size, by Region", caption = "Source: U.S. Census Bureau Household Pulse Survey") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5), text = element_text(size = 9))
 
   
 ```
@@ -104,7 +104,7 @@ pulse %>%
   filter(forclose != -99, forclose != -88) %>%
   ggplot(aes(x = forclose, fill = factor(rrace))) +  
   geom_bar() +
-  labs(title = "Foreclosure Likelihood in the Next Two Months, by Race", y = "Count", x = "Response", fill = "Race") +
+  labs(title = "Does Foreclosure Likelihood Vary By Race?", y = "Count", x = "Response", fill = "Race", subtitle = "Likelihood of Foreclosure on Home in the Next Two Months, by Race", caption = "Source: U.S. Census Bureau Household Pulse Survey") +
 scale_x_discrete(
     limits = c("1", "2", "3", "4"),
     labels = c(
@@ -116,14 +116,12 @@ scale_x_discrete(
   scale_fill_manual(values = c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple"),
                      labels = c("1" = "White", "2" = "Black", "3" = "Asian", "4" = "Any other Race")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 
 
 ```
 
 **Graph 4**
-
-educational attainment versus avg number of children in household
 
 ```{r}
 pulse %>%
@@ -132,7 +130,7 @@ pulse %>%
   ggplot(mapping = aes(x = factor(eeduc), y = avg_num_child)) +
   geom_col(fill = "green") +
   geom_text(aes(label = round(avg_num_child, 2)), vjust = -0.5, size = 3) +
-  labs(title = "Average Number of Children by Educational Attainment", y = "Average Number of Children" , x = "Education Level") +
+  labs(title = "Does Education Level Impact the Number of Children A Respondent Has?", y = "Average Number of Children" , x = "Education Level", subtitle = "Average Number of Children by Educational Attainment", caption = "Source: U.S. Census Bureau Household Pulse Survey") +
   scale_x_discrete(labels = c(
     `1` = "Less than high school",
     `2` = "Some high school",
@@ -143,6 +141,6 @@ pulse %>%
     `7` = "Graduate degree"
   )) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5), text = element_text(size = 9))
 
 ```
