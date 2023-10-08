@@ -123,6 +123,8 @@ scale_x_discrete(
 
 **Graph 4**
 
+*Description Here*
+
 ```{r}
 pulse %>%
   group_by(eeduc) %>%
