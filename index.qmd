@@ -97,7 +97,7 @@ pulse %>%
 
 **Visualization 3**
 
-*Description Here*
+This visualization shows the amount of expected foreclosures over the next two months along with their assessed likelihood. The visualizations are further distributed by race, specifically white, black, Asian, and other. The data shows that the majority of expected foreclosures, at all levels of likelihood, are among those who identify as white. The next step researchers would want to take from this visualization is to account for the share of the housing market each race takes up, thereby being able to determine which race is most likely to experience foreclosures.
 
 ```{r}
 pulse %>%
@@ -121,9 +121,9 @@ scale_x_discrete(
 
 ```
 
-**Graph 4**
+**Visualization 4**
 
-*Description Here*
+This visualization shows the average number of children respondents had based on their education level. Educational levels included: less than high school, some high school, high school degree, some college, associate's degree, bachelor's degree, and graduate degree. Perhaps as expected, respondents with less education had a notably higher average number of children (1.12), with that rate drastically falling and leveling out between 0.6 and 0.7 with a high school degree or higher. This insight can shape which demographics should receive varying types of resources.
 
 ```{r}
 pulse %>%
